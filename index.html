@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MORTAL GARDEN — growing strange things</title>
+<meta name="description" content="A tiny Norwegian game studio growing strange things.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #07050e;
+    --soil: #140b24;
+    --glow: #76ff7a;      /* bioluminescent green */
+    --toxic: #c2ff4f;     /* acid lime highlight */
+    --weird: #ff4fd8;     /* mutant magenta */
+    --bone: #efeaf7;
+    --dim: #6f5f8f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+
+  body {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 115%, #1c2e16 0%, transparent 60%),
+      radial-gradient(ellipse 120% 100% at 50% 110%, var(--soil) 0%, var(--void) 70%);
+    color: var(--bone);
+    font-family: "Space Mono", monospace;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    text-align: center;
+    cursor: crosshair;
+  }
+
+  main { position: relative; z-index: 2; padding: 1.5rem; }
+
+  /* ---------- the strange flower ---------- */
+  .flower { width: clamp(110px, 18vw, 160px); margin: 0 auto 0.5rem; display: block; }
+  .flower .petal-shape { fill: var(--weird); opacity: 0.85; }
+  .flower .stem { stroke: var(--glow); }
+  .flower .iris { fill: var(--toxic); }
+  .flower .pupil { fill: var(--void); }
+  .flower-wrap { animation: hover-bob 5s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255, 79, 216, 0.35)); }
+
+  @keyframes hover-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+  }
+
+  .blink { transform-origin: 50% 38%; animation: blink 6s infinite; }
+  @keyframes blink {
+    0%, 94%, 100% { transform: scaleY(1); }
+    96%, 98% { transform: scaleY(0.06); }
+  }
+
+  /* ---------- title ---------- */
+  h1 {
+    font-family: "Syne", sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 12vw, 7rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  h1 .row { display: block; }
+  h1 .garden {
+    color: var(--glow);
+    text-shadow:
+      0 0 22px rgba(118, 255, 122, 0.55),
+      0 0 60px rgba(118, 255, 122, 0.25);
+    position: relative;
+    animation: flicker 7s infinite;
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    41% { opacity: 1; }
+    42% { opacity: 0.45; }
+    43% { opacity: 1; }
+    71% { opacity: 1; }
+    72% { opacity: 0.6; }
+    72.5% { opacity: 1; }
+  }
+
+  /* glitch slices on hover/tap of the title */
+  .glitchable { position: relative; display: inline-block; }
+  .glitchable::before, .glitchable::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .glitchable::before { color: var(--weird); }
+  .glitchable::after  { color: var(--toxic); }
+  .glitchable:hover::before, .glitchable.zap::before {
+    opacity: 0.8;
+    animation: slice-a 0.45s steps(2, end) infinite;
+  }
+  .glitchable:hover::after, .glitchable.zap::after {
+    opacity: 0.8;
+    animation: slice-b 0.38s steps(3, end) infinite;
+  }
+
+  @keyframes slice-a {
+    0%   { clip-path: inset(10% 0 70% 0); transform: translate(-5px, -2px); }
+    50%  { clip-path: inset(60% 0 15% 0); transform: translate(4px, 2px); }
+    100% { clip-path: inset(30% 0 45% 0); transform: translate(-3px, 1px); }
+  }
+  @keyframes slice-b {
+    0%   { clip-path: inset(70% 0 5% 0);  transform: translate(5px, 2px); }
+    50%  { clip-path: inset(5% 0 75% 0);  transform: translate(-4px, -2px); }
+    100% { clip-path: inset(40% 0 35% 0); transform: translate(3px, -1px); }
+  }
+
+  /* ---------- tagline + status ---------- */
+  .tagline {
+    margin-top: 1.6rem;
+    font-size: clamp(0.85rem, 2.4vw, 1.05rem);
+    color: var(--bone);
+    opacity: 0.9;
+  }
+  .tagline .hl { color: var(--weird); }
+
+  .status {
+    margin-top: 2.6rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .status .cursor { display: inline-block; width: 0.6em; animation: caret 1s steps(1) infinite; color: var(--glow); }
+  @keyframes caret { 50% { opacity: 0; } }
+
+  .contact { margin-top: 1rem; font-size: 0.85rem; }
+  .contact a {
+    color: var(--toxic);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(194, 255, 79, 0.4);
+    transition: border-color 150ms ease, text-shadow 150ms ease;
+  }
+  .contact a:hover { border-bottom-style: solid; text-shadow: 0 0 14px rgba(194, 255, 79, 0.6); }
+  .contact a:focus-visible { outline: 2px solid var(--toxic); outline-offset: 4px; }
+
+  .hint {
+    position: fixed;
+    bottom: 1rem;
+    left: 0; right: 0;
+    z-index: 2;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--dim);
+    opacity: 0.7;
+  }
+
+  /* ---------- spores ---------- */
+  #spores {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flower-wrap, .blink, h1 .garden, .status .cursor { animation: none; }
+    .glitchable:hover::before, .glitchable:hover::after,
+    .glitchable.zap::before, .glitchable.zap::after { animation: none; opacity: 0; }
+    #spores, .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="spores" aria-hidden="true"></canvas>
+
+<main>
+  <div class="flower-wrap">
+    <svg class="flower" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A strange glowing flower with one watching eye">
+      <path class="stem" d="M100 100 C 96 150, 108 170, 100 218" fill="none" stroke-width="5" stroke-linecap="round"/>
+      <path class="stem" d="M100 165 C 80 158, 66 162, 52 150" fill="none" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+      <g class="petal-group">
+        <ellipse class="petal-shape" cx="100" cy="32" rx="20" ry="34"/>
+        <ellipse class="petal-shape" cx="100" cy="32" rx="20" ry="34" transform="rotate(60 100 75)"/>
+        <ellipse class="petal-shape" cx="100" cy="32" rx="20" ry="34" transform="rotate(120 100 75)"/>
+        <ellipse class="petal-shape" cx="100" cy="32" rx="20" ry="34" transform="rotate(180 100 75)"/>
+        <ellipse class="petal-shape" cx="100" cy="32" rx="20" ry="34" transform="rotate(240 100 75)"/>
+        <ellipse class="petal-shape" cx="100" cy="32" rx="20" ry="34" transform="rotate(300 100 75)"/>
+      </g>
+      <g class="blink">
+        <circle cx="100" cy="75" r="30" fill="#efeaf7"/>
+        <circle class="iris" id="iris" cx="100" cy="75" r="16"/>
+        <circle class="pupil" id="pupil" cx="100" cy="75" r="7"/>
+        <circle cx="96" cy="70" r="3" fill="#ffffff" opacity="0.9"/>
+      </g>
+    </svg>
+  </div>
+
+  <h1>
+    <span class="row glitchable" data-text="MORTAL">MORTAL</span>
+    <span class="row garden glitchable" data-text="GARDEN">GARDEN</span>
+  </h1>
+
+  <p class="tagline">a tiny norwegian game studio <span class="hl">growing strange things</span></p>
+
+  <p class="status">first specimen in cultivation<span class="cursor">_</span></p>
+  <p class="contact"><a href="mailto:hello@mortalgarden.example">hello@mortalgarden.example</a></p>
+</main>
+
+<p class="hint" aria-hidden="true">click anywhere · feed the garden</p>
+
+<script>
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ----- eye follows the cursor ----- */
+  var iris = document.getElementById("iris");
+  var pupil = document.getElementById("pupil");
+  var flower = document.querySelector(".flower");
+
+  function moveEye(clientX, clientY) {
+    var rect = flower.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height * 0.34;
+    var angle = Math.atan2(clientY - cy, clientX - cx);
+    var dist = Math.min(9, Math.hypot(clientX - cx, clientY - cy) / 30);
+    var x = 100 + Math.cos(angle) * dist;
+    var y = 75 + Math.sin(angle) * dist;
+    iris.setAttribute("cx", x);  iris.setAttribute("cy", y);
+    pupil.setAttribute("cx", x); pupil.setAttribute("cy", y);
+  }
+
+  window.addEventListener("pointermove", function (e) { moveEye(e.clientX, e.clientY); });
+
+  if (reduce) return; /* eye still works, particles stay off */
+
+  /* ----- rising spores + click bursts (canvas) ----- */
+  var canvas = document.getElementById("spores");
+  var ctx = canvas.getContext("2d");
+  var spores = [];
+  var COLORS = ["#76ff7a", "#c2ff4f", "#ff4fd8"];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function spawnAmbient() {
+    spores.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: -(0.3 + Math.random() * 0.7),
+      r: 1 + Math.random() * 2.2,
+      life: 1,
+      decay: 0.0015 + Math.random() * 0.002,
+      color: COLORS[(Math.random() * COLORS.length) | 0]
+    });
+  }
+
+  function burst(x, y) {
+    for (var i = 0; i < 26; i++) {
+      var a = Math.random() * Math.PI * 2;
+      var speed = 1 + Math.random() * 4;
+      spores.push({
+        x: x, y: y,
+        vx: Math.cos(a) * speed,
+        vy: Math.sin(a) * speed - 1,
+        r: 1.5 + Math.random() * 2.5,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.015,
+        color: COLORS[(Math.random() * COLORS.length) | 0]
+      });
+    }
+  }
+
+  window.addEventListener("pointerdown", function (e) {
+    burst(e.clientX, e.clientY);
+    /* quick glitch zap on the title when the garden is fed */
+    document.querySelectorAll(".glitchable").forEach(function (el) {
+      el.classList.add("zap");
+      setTimeout(function () { el.classList.remove("zap"); }, 350);
+    });
+  });
+
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (spores.length < 70 && Math.random() < 0.35) spawnAmbient();
+
+    for (var i = spores.length - 1; i >= 0; i--) {
+      var s = spores[i];
+      s.x += s.vx;
+      s.y += s.vy;
+      s.vy += s.decay > 0.01 ? 0.03 : 0; /* burst spores fall, ambient ones float */
+      s.life -= s.decay;
+      if (s.life <= 0) { spores.splice(i, 1); continue; }
+
+      ctx.globalAlpha = Math.max(0, s.life) * 0.8;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = s.color;
+      ctx.fillStyle = s.color;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+
+</body>
+</html>
